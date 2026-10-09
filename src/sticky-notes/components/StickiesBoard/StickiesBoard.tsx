@@ -5,6 +5,7 @@ import { StickyNote } from "../StickyNote";
 import { useNoteDragging } from "./hooks/useNoteDragging";
 import "./StickiesBoard.css";
 import { BOARD_HEIGHT, BOARD_WIDTH } from "./utils/constants";
+import { TrashZone } from "../TrashZone";
 
 export const StickiesBoard: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
@@ -14,6 +15,8 @@ export const StickiesBoard: React.FC = () => {
     onNotePointerUp,
     onNotePointerMove,
     onNotePointerCancel,
+    trashZoneRef,
+    isDragging,
   } = useNoteDragging(notes, setNotes);
 
   return (
@@ -26,6 +29,7 @@ export const StickiesBoard: React.FC = () => {
           setNotes((currentNotes) => [...currentNotes, newNote]);
         }}
       />
+      <TrashZone ref={trashZoneRef} isDragging={isDragging} />
       {notes.map((note) => (
         <StickyNote
           key={note.id}

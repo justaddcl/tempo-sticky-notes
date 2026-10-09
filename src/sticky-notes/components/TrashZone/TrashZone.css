@@ -1,0 +1,11 @@
+.trash-zone {
+  background-color: rgba(193, 0, 7, 0.15);
+  border: 2px dashed rgba(193, 0, 7, 0.25);
+  bottom: 0;
+  display: grid;
+  height: var(--trash-zone-height);
+  left: 0;
+  place-items: center;
+  position: absolute;
+  width: var(--trash-zone-width);
+}

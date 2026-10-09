@@ -1,17 +1,21 @@
-import { useRef, type Dispatch, type SetStateAction } from "react";
+import { useRef, useState, type Dispatch, type SetStateAction } from "react";
 import type { ActiveDragRef, Note } from "../../../types";
 import { calculateUpdatedCoordinates } from "../utils/calculateUpdatedCoordinates";
+import { isWithinRect } from "../utils/isWithinRect";
 
 export const useNoteDragging = (
   notes: Note[],
   setNotes: Dispatch<SetStateAction<Note[]>>,
 ) => {
   const activeDragRef = useRef<ActiveDragRef>(null);
+  const trashZoneRef = useRef<HTMLDivElement | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const onNotePointerDown = (
     event: React.PointerEvent<HTMLDivElement>,
     noteId: string,
   ) => {
+    setIsDragging(true);
     event.currentTarget.setPointerCapture(event.pointerId);
     const activeNote = notes.find((note) => note.id === noteId);
 
@@ -31,7 +35,28 @@ export const useNoteDragging = (
     };
   };
 
-  const onNotePointerUp = () => {
+  const onNotePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+    const activeDrag = activeDragRef?.current;
+    if (!activeDrag || event.pointerId !== activeDrag.pointerId) {
+      return;
+    }
+
+    const trashZoneRect = trashZoneRef.current?.getBoundingClientRect();
+
+    if (
+      trashZoneRect &&
+      isWithinRect({
+        x: event.clientX,
+        y: event.clientY,
+        rect: trashZoneRect,
+      })
+    ) {
+      setNotes((notes) =>
+        notes.filter((note) => note.id !== activeDrag.noteId),
+      );
+    }
+
+    setIsDragging(false);
     activeDragRef.current = null;
   };
 
@@ -71,6 +96,7 @@ export const useNoteDragging = (
   };
 
   const onNotePointerCancel = () => {
+    setIsDragging(false);
     activeDragRef.current = null;
   };
 
@@ -79,5 +105,7 @@ export const useNoteDragging = (
     onNotePointerUp,
     onNotePointerMove,
     onNotePointerCancel,
+    trashZoneRef,
+    isDragging,
   };
 };
