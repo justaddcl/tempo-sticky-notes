@@ -1,3 +1,10 @@
 .sticky-note {
   position: absolute;
 }
+
+.sticky-note:hover {
+  cursor: grab;
+}
+.sticky-note:active {
+  cursor: grabbing;
+}

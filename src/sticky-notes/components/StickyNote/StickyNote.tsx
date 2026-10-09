@@ -5,11 +5,21 @@ const DEFAULT_STICKY_COLOR = "#FFEBA1";
 
 type StickyNoteProps = ComponentPropsWithoutRef<"div">;
 
-export const StickyNote: React.FC<StickyNoteProps> = ({ style }) => {
+export const StickyNote: React.FC<StickyNoteProps> = ({
+  style,
+  onPointerDown,
+  onPointerUp,
+  onPointerMove,
+  onPointerCancel,
+}) => {
   return (
     <div
       className="sticky-note"
       style={{ backgroundColor: DEFAULT_STICKY_COLOR, ...style }}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
+      onPointerMove={onPointerMove}
+      onPointerCancel={onPointerCancel}
     />
   );
 };

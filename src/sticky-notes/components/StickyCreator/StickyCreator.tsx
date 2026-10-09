@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { BOARD_HEIGHT, BOARD_WIDTH } from "../StickiesBoard/StickiesBoard";
 import type { Note } from "../../types";
+import { BOARD_HEIGHT, BOARD_WIDTH } from "../StickiesBoard/utils/constants";
 
 const DEFAULT_STICKY_WIDTH = 100;
 const DEFAULT_STICKY_HEIGHT = 100;

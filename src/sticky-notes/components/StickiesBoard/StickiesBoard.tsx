@@ -1,14 +1,20 @@
 import { useState } from "react";
-import "./StickiesBoard.css";
 import { type Note } from "../../types";
-import { StickyNote } from "../StickyNote";
 import { StickyCreator } from "../StickyCreator";
-
-export const BOARD_WIDTH = 900;
-export const BOARD_HEIGHT = 600;
+import { StickyNote } from "../StickyNote";
+import { useNoteDragging } from "./hooks/useNoteDragging";
+import "./StickiesBoard.css";
+import { BOARD_HEIGHT, BOARD_WIDTH } from "./utils/constants";
 
 export const StickiesBoard: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
+
+  const {
+    onNotePointerDown,
+    onNotePointerUp,
+    onNotePointerMove,
+    onNotePointerCancel,
+  } = useNoteDragging(notes, setNotes);
 
   return (
     <div
@@ -23,6 +29,10 @@ export const StickiesBoard: React.FC = () => {
       {notes.map((note) => (
         <StickyNote
           key={note.id}
+          onPointerDown={(event) => onNotePointerDown(event, note.id)}
+          onPointerUp={onNotePointerUp}
+          onPointerMove={onNotePointerMove}
+          onPointerCancel={onNotePointerCancel}
           style={{
             left: note.x,
             top: note.y,
