@@ -1,4 +1,6 @@
 .sticky-note {
+  background-color: var(--note-color);
+  box-shadow: var(--shadow);
   position: absolute;
 }
 

@@ -15,13 +15,19 @@ export const useNoteDragging = (
     event: React.PointerEvent<HTMLDivElement>,
     noteId: string,
   ) => {
-    setIsDragging(true);
-    event.currentTarget.setPointerCapture(event.pointerId);
+    // don't start a drag event if it's not a left (primary) click
+    if (event.button !== 0) {
+      return;
+    }
+
     const activeNote = notes.find((note) => note.id === noteId);
 
     if (!activeNote) {
       return;
     }
+
+    setIsDragging(true);
+    event.currentTarget.setPointerCapture(event.pointerId);
 
     const { x: noteStartingX, y: noteStartingY } = activeNote;
 
@@ -41,19 +47,21 @@ export const useNoteDragging = (
       return;
     }
 
-    const trashZoneRect = trashZoneRef.current?.getBoundingClientRect();
+    const trashZone = trashZoneRef.current;
 
-    if (
-      trashZoneRect &&
-      isWithinRect({
-        x: event.clientX,
-        y: event.clientY,
-        rect: trashZoneRect,
-      })
-    ) {
-      setNotes((notes) =>
-        notes.filter((note) => note.id !== activeDrag.noteId),
-      );
+    if (trashZone) {
+      if (
+        isWithinRect({
+          x: event.clientX,
+          y: event.clientY,
+          rect: trashZone.getBoundingClientRect(),
+        })
+      ) {
+        setNotes((notes) =>
+          notes.filter((note) => note.id !== activeDrag.noteId),
+        );
+      }
+      trashZone.style.backgroundColor = "#fef2f2";
     }
 
     setIsDragging(false);
@@ -67,23 +75,33 @@ export const useNoteDragging = (
       return;
     }
 
-    const activeNoteIndex = notes.findIndex(
-      (note) => note.id === activeDrag.noteId,
-    );
+    const activeNote = notes.find((note) => note.id === activeDrag.noteId);
 
-    if (activeNoteIndex === -1) {
+    if (!activeNote) {
       return;
+    }
+
+    const trashZone = trashZoneRef.current;
+
+    if (trashZone) {
+      const isOverTrashZone = isWithinRect({
+        x: event.clientX,
+        y: event.clientY,
+        rect: trashZone.getBoundingClientRect(),
+      });
+
+      trashZone.style.backgroundColor = isOverTrashZone ? "#fca5a5" : "#fef2f2";
     }
 
     const { x, y } = calculateUpdatedCoordinates({
       clientX: event.clientX,
       clientY: event.clientY,
       activeDrag,
-      activeNote: notes[activeNoteIndex],
+      activeNote,
     });
 
     const updatedNote: Note = {
-      ...notes[activeNoteIndex],
+      ...activeNote,
       x,
       y,
     };
@@ -96,6 +114,10 @@ export const useNoteDragging = (
   };
 
   const onNotePointerCancel = () => {
+    if (trashZoneRef.current) {
+      trashZoneRef.current.style.backgroundColor = "#fef2f2";
+    }
+
     setIsDragging(false);
     activeDragRef.current = null;
   };
