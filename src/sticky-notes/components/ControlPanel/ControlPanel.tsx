@@ -27,6 +27,7 @@ export const ControlPanel: React.FC<ControlPanel> = ({ onCreate }) => {
   const createNote = (event: React.SubmitEvent) => {
     event.preventDefault();
 
+    // Native HTML input constraints validate the form before this submit handler runs.
     const newNote: Note = {
       id: crypto.randomUUID(),
       width,

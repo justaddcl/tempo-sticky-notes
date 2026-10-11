@@ -11,5 +11,6 @@
   place-items: center;
   position: absolute;
   width: var(--trash-zone-width);
+  /* Keep trash zone visible even when a larger note overlaps it */
   z-index: 100;
 }

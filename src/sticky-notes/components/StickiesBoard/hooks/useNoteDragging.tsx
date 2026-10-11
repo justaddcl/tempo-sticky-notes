@@ -15,7 +15,7 @@ export const useNoteDragging = (
     event: React.PointerEvent<HTMLDivElement>,
     noteId: string,
   ) => {
-    // don't start a drag event if it's not a left (primary) click
+    // Don't start a drag event if it's not a left (primary) click
     if (event.button !== 0) {
       return;
     }
@@ -50,6 +50,7 @@ export const useNoteDragging = (
     const trashZone = trashZoneRef.current;
 
     if (trashZone) {
+      // Delete based on the pointer's position, not the note's overlap
       if (
         isWithinRect({
           x: event.clientX,
